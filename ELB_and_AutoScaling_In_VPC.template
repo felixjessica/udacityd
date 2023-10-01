@@ -10,7 +10,6 @@
       "MinLength": "1",
       "MaxLength": "64",
       "AllowedPattern": "[-_ a-zA-Z0-9]*",
-      "AllowedValues": ["udacityproject"],
       
     },
     "SSHLocation": {
