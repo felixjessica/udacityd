@@ -5,9 +5,8 @@
     "KeyName": {
       "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
       "Type": "String",
-      "NoEcho": "true",
+      "NoEcho": true,
       "Default": ""
-      
     },
     "SSHLocation": {
       "Description": "Lockdown SSH access to the bastion host (default can be accessed from anywhere)",
@@ -103,7 +102,7 @@
       "MinLength": "1",
       "Default": "vpc-0a12bc3456789def0",
       "MaxLength": "32",
-      "AllowedPattern": "[\\-a-zA-Z0-9]*",
+      "AllowedPattern": "[-a-zA-Z0-9]*",
       "ConstraintDescription": "Can contain only alphanumeric characters and hyphens."
     },
     "PublicSubnet1": {
@@ -112,7 +111,7 @@
       "MinLength": "1",
       "Default": "subnet-0123456789abcdef0",
       "MaxLength": "32",
-      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "AllowedPattern": "[-a-zA-Z0-9]*",
       "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
     },
     "PublicSubnet2": {
@@ -121,7 +120,7 @@
       "MinLength": "1",
       "Default": "subnet-0123456789abcdef1",
       "MaxLength": "32",
-      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "AllowedPattern": "[-a-zA-Z0-9]*",
       "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
     },
     "PrivateSubnet1": {
@@ -130,8 +129,8 @@
       "MinLength": "1",
       "Default": "subnet-0123456789abcdef2",
       "MaxLength": "32",
-      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
-      
+      "AllowedPattern": "[-a-zA-Z0-9]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens."
     },
     "PrivateSubnet2": {
       "Description": "Private subnet 2 Id",
@@ -139,8 +138,8 @@
       "MinLength": "1",
       "Default": "subnet-0123456789abcdef3",
       "MaxLength": "32",
-      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
-      
+      "AllowedPattern": "[-a-zA-Z0-9]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens."
     },
     "MySecurityGroupId": {
       "Description": "ID of the security group to associate with the load balancer",
