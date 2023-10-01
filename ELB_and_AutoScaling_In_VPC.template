@@ -131,7 +131,7 @@
       "Default": "subnet-0123456789abcdef2",
       "MaxLength": "32",
       "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
-      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+      
     },
     "PrivateSubnet2": {
       "Description": "Private subnet 2 Id",
@@ -140,7 +140,7 @@
       "Default": "subnet-0123456789abcdef3",
       "MaxLength": "32",
       "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
-      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+      
     },
     "MySecurityGroupId": {
       "Description": "ID of the security group to associate with the load balancer",
