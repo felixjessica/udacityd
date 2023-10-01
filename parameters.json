@@ -1,0 +1,54 @@
+[
+    {
+        "ParameterKey": "KeyName",
+        "ParameterValue": "udacityproject"
+    },
+    {
+        "ParameterKey": "SSHLocation",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "FrontendInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "FrontendSize",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "BackendInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "BackendSize",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "BastionInstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey": "VpcId",
+        "ParameterValue": "vpc-0a12bc3456789def0"
+    },
+    {
+        "ParameterKey": "PublicSubnet1",
+        "ParameterValue": "subnet-0123456789abcdef0"
+    },
+    {
+        "ParameterKey": "PublicSubnet2",
+        "ParameterValue": "subnet-0123456789abcdef1"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1",
+        "ParameterValue": "subnet-0123456789abcdef2"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2",
+        "ParameterValue": "subnet-0123456789abcdef3"
+    },
+    {
+        "ParameterKey": "MySecurityGroupId",
+        "ParameterValue": "sg-0123456789abcdef4"
+    }
+]

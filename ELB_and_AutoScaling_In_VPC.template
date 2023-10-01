@@ -1,0 +1,213 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation Sample Template multi-tier-web-app-in-vpc.template: Sample template showing how to create a multi-tier web application in a VPC with multiple subnets. The first subnet is public and contains an internet-facing load balancer, a NAT device for internet access from the private subnet, and a bastion host to allow SSH access to the hosts in the private subnet. The second subnet is private and contains a Frontend fleet of EC2 instances, an internal load balancer, and a Backend fleet of EC2 instances. **WARNING** This template creates Elastic Load Balancers and Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Parameters": {
+    "KeyName": {
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Type": "String",
+      "NoEcho": "true",
+      "Default": "",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern": "[-_ a-zA-Z0-9]*",
+      "AllowedValues": ["udacityproject"],
+      
+    },
+    "SSHLocation": {
+      "Description": "Lockdown SSH access to the bastion host (default can be accessed from anywhere)",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "Must be a valid CIDR range of the form x.x.x.x/x."
+    },
+    "FrontendInstanceType": {
+      "Description": "Frontend Server EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "AllowedValues": [
+        "t1.micro",
+        "m1.small",
+        "m1.medium",
+        "m1.large",
+        "m1.xlarge",
+        "m2.xlarge",
+        "m2.2xlarge",
+        "m2.4xlarge",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c1.medium",
+        "c1.xlarge",
+        "cc1.4xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type."
+    },
+    "FrontendSize": {
+      "Description": "Number of EC2 instances to launch for the Frontend server",
+      "Type": "Number",
+      "Default": "1"
+    },
+    "BackendInstanceType": {
+      "Description": "Backend Server EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "AllowedValues": [
+        "t1.micro",
+        "m1.small",
+        "m1.medium",
+        "m1.large",
+        "m1.xlarge",
+        "m2.xlarge",
+        "m2.2xlarge",
+        "m2.4xlarge",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c1.medium",
+        "c1.xlarge",
+        "cc1.4xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type."
+    },
+    "BackendSize": {
+      "Description": "Number of EC2 instances to launch for the backend server",
+      "Type": "Number",
+      "Default": "1"
+    },
+    "BastionInstanceType": {
+      "Description": "Bastion Host EC2 instance type",
+      "Type": "String",
+      "Default": "m1.small",
+      "AllowedValues": [
+        "t1.micro",
+        "m1.small",
+        "m1.medium",
+        "m1.large",
+        "m1.xlarge",
+        "m2.xlarge",
+        "m2.2xlarge",
+        "m2.4xlarge",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c1.medium",
+        "c1.xlarge",
+        "cc1.4xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type."
+    },
+    "VpcId": {
+      "Description": "VPC Id for the stack",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "vpc-0a12bc3456789def0",
+      "MaxLength": "32",
+      "AllowedPattern": "[\\-a-zA-Z0-9]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens."
+    },
+    "PublicSubnet1": {
+      "Description": "Public subnet 1 Id",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "subnet-0123456789abcdef0",
+      "MaxLength": "32",
+      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+    },
+    "PublicSubnet2": {
+      "Description": "Public subnet 2 Id",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "subnet-0123456789abcdef1",
+      "MaxLength": "32",
+      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+    },
+    "PrivateSubnet1": {
+      "Description": "Private subnet 1 Id",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "subnet-0123456789abcdef2",
+      "MaxLength": "32",
+      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+    },
+    "PrivateSubnet2": {
+      "Description": "Private subnet 2 Id",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "subnet-0123456789abcdef3",
+      "MaxLength": "32",
+      "AllowedPattern": "[-a-zA like n alphanumeric characters]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters and hyphens, and must not exceed 32 characters."
+    },
+    "MySecurityGroupId": {
+      "Description": "ID of the security group to associate with the load balancer",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "MyLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": "udacityproject2",
+        "Subnets": [
+          {
+            "Ref": "PublicSubnet1"
+          },
+          {
+            "Ref": "PublicSubnet2"
+          }
+        ],
+        "SecurityGroups": [{"Ref": "MySecurityGroupId"}],
+        "Scheme": "internet-facing",
+        "LoadBalancerAttributes": [
+          {
+            "Key": "idle_timeout.timeout_seconds",
+            "Value": "60"
+          }
+        ]
+      }
+    },
+    "FrontendInstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"},
+        "GroupDescription": "Enable HTTP and SSH access",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": {"Ref": "SSHLocation"}
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+
+    // ... Other resource definitions ...
+
+  },
+  "Outputs": {
+    "LoadBalancerDNSName": {
+      "Description": "DNS Name of the Elastic Load Balancer",
+      "Value": {
+        "Fn::GetAtt": [
+          "MyLoadBalancer",
+          "DNSName"
+        ]
+      }
+    }
+  }
+}
